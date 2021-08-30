@@ -25,6 +25,12 @@ DATASET = "BingAds"
 
 
 def get_auth():
+    """Get Authorzation data
+
+    Returns:
+        bingads.authorization.AuthorizationData: Authorization Data
+    """
+
     authorization_data = AuthorizationData(
         account_id=None,
         customer_id=None,
@@ -47,20 +53,49 @@ def get_auth():
 
 
 class CampaignPerformanceReport:
+    """Main model for the report
+
+    Returns:
+        CampaignPerformanceReport: Report
+    """
+
     table = "CampaignPerformanceReport"
 
     @property
     def config(self):
+        """Get config from JSON
+
+        Returns:
+            list: Schema
+        """
+
         with open(f'configs/{self.table}.json') as f:
             config = json.load(f)
         return config['schema']
 
     def __init__(self, start, end):
+        """Initiate the instance
+
+        Args:
+            start (str): Date in %Y-%m-%d
+            end (str): Date in %Y-%m-%d
+        """
+
         self.start, self.end = self._get_date_range(start, end)
         self.authorization_data = get_auth()
         self.schema = self.config
 
     def _get_date_range(self, _start, _end):
+        """Generate date range for the run
+
+        Args:
+            _start (str): Date in %Y-%m-%d
+            _end (str): Date in %Y-%m-%d
+
+        Returns:
+            tuple: (start, end)
+        """
+
         if _start and _end:
             start, end = [datetime.strptime(i, DATE_FORMAT) for i in [_start, _end]]
         else:
@@ -69,6 +104,12 @@ class CampaignPerformanceReport:
         return start, end
 
     def _get(self):
+        """Get the report
+
+        Returns:
+            list: List of results
+        """
+
         report_request = self._get_report_request()
         report_container = self._get_report(report_request)
         rows = [i for i in report_container.report_records]
@@ -163,6 +204,15 @@ class CampaignPerformanceReport:
         return report_container
 
     def _transform(self, _rows):
+        """Transform data
+
+        Args:
+            _rows (list): List of results
+
+        Returns:
+            list: List of results
+        """
+
         rows = [
             {
                 "AccountName": row.value("AccountName"),
@@ -181,8 +231,15 @@ class CampaignPerformanceReport:
         return rows
 
     def _load(self, rows):
-        # with open('test.json', 'w') as f:
-        #     json.dump(rows, f)
+        """Load to BigQuery
+
+        Args:
+            rows (list): List of results
+
+        Returns:
+            google.cloud.bigquery.LoadJob: Load Job
+        """
+
         return BQ_CLIENT.load_table_from_json(
             rows,
             f"{DATASET}.{self.table}",
@@ -194,6 +251,8 @@ class CampaignPerformanceReport:
         ).result()
 
     def _update(self):
+        """Update the table to the latest values"""
+
         query = f"""
         SELECT * EXCEPT (row_num)
         FROM (
@@ -207,6 +266,12 @@ class CampaignPerformanceReport:
         BQ_CLIENT.query(query).result()
 
     def run(self):
+        """Run function
+
+        Returns:
+            dict: Job results
+        """
+                
         rows = self._get()
         response = {
             "table": "CampaignPerformanceReport",

@@ -5,6 +5,15 @@ from models import CampaignPerformanceReport
 
 
 def main(request):
+    """API Gateway
+
+    Args:
+        request (flask.Request): HTTP request
+
+    Returns:
+        dict: Response
+    """
+
     request_json = request.get_json()
     message = request_json["message"]
     data_bytes = message["data"]
