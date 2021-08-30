@@ -1,0 +1,44 @@
+{
+    "schema": [
+        {
+            "name": "AccountName",
+            "type": "STRING"
+        },
+        {
+            "name": "AccountId",
+            "type": "INTEGER"
+        },
+        {
+            "name": "TimePeriod",
+            "type": "STRING"
+        },
+        {
+            "name": "CampaignId",
+            "type": "INTEGER"
+        },
+        {
+            "name": "CampaignName",
+            "type": "STRING"
+        },
+        {
+            "name": "Impressions",
+            "type": "INTEGER"
+        },
+        {
+            "name": "Clicks",
+            "type": "INTEGER"
+        },
+        {
+            "name": "Conversions",
+            "type": "INTEGER"
+        },
+        {
+            "name": "Spend",
+            "type": "FLOAT"
+        },
+        {
+            "name": "_batched_at",
+            "type": "TIMESTAMP"
+        }
+    ]
+}
