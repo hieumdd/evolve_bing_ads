@@ -254,6 +254,7 @@ class CampaignPerformanceReport:
         """Update the table to the latest values"""
 
         query = f"""
+        CREATE OR REPLACE TABLE {DATASET}.{self.table} AS
         SELECT * EXCEPT (row_num)
         FROM (
             SELECT *,
@@ -271,7 +272,7 @@ class CampaignPerformanceReport:
         Returns:
             dict: Job results
         """
-                
+
         rows = self._get()
         response = {
             "table": "CampaignPerformanceReport",
